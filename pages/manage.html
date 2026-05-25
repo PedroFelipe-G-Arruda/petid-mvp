@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Pet</title>
+</head>
+<body>
+
+    <h1>Gerenciar Pet</h1>
+
+    <div id="pet-info">
+        Carregando...
+    </div>
+
+    <button id="missing-btn">
+        🚨 Meu pet fugiu
+    </button>
+
+    <button id="safe-btn">
+        ✅ Pet encontrado
+    </button>
+
+    <script type="module">
+
+        import { createClient }
+        from "https://esm.sh/@supabase/supabase-js";
+
+        import {
+            SUPABASE_URL,
+            SUPABASE_ANON_KEY
+        } from "../js/config.js";
+
+        const client =
+            createClient(
+                SUPABASE_URL,
+                SUPABASE_ANON_KEY
+            );
+
+        function getToken() {
+            const params =
+                new URLSearchParams(
+                    window.location.search
+                );
+
+            return params.get("token");
+        }
+
+        let pet = null;
+
+        async function loadPet() {
+
+            const token =
+                getToken();
+
+            const {
+                data,
+                error
+            } = await client
+                .from("pets")
+                .select("*")
+                .eq(
+                    "manage_token",
+                    token
+                )
+                .single();
+
+            if (error) {
+                document
+                    .getElementById(
+                        "pet-info"
+                    )
+                    .innerHTML =
+                    "Pet não encontrado";
+
+                return;
+            }
+
+            pet = data;
+
+            document
+                .getElementById(
+                    "pet-info"
+                )
+                .innerHTML = `
+                    <h2>${pet.nome}</h2>
+                    <p>
+                        Status:
+                        ${pet.status}
+                    </p>
+                `;
+        }
+
+        async function updateStatus(
+            newStatus
+        ) {
+
+            const {
+                error
+            } = await client
+                .from("pets")
+                .update({
+                    status:
+                        newStatus
+                })
+                .eq(
+                    "id",
+                    pet.id
+                );
+
+            if (error) {
+                alert(
+                    "Erro ao atualizar"
+                );
+
+                return;
+            }
+
+            alert(
+                "Status atualizado!"
+            );
+
+            loadPet();
+        }
+
+        document
+            .getElementById(
+                "missing-btn"
+            )
+            .addEventListener(
+                "click",
+                () => {
+                    updateStatus(
+                        "missing"
+                    );
+                }
+            );
+
+        document
+            .getElementById(
+                "safe-btn"
+            )
+            .addEventListener(
+                "click",
+                () => {
+                    updateStatus(
+                        "safe"
+                    );
+                }
+            );
+
+        loadPet();
+
+    </script>
+
+</body>
+</html>

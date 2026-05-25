@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1">
+
+    <title>PetID</title>
+
+    <link rel="stylesheet"
+          href="../css/style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+    <div id="pet-info">
+        Carregando pet...
+    </div>
+
+</div>
+
+<script type="module">
+
+import { createClient }
+from "https://esm.sh/@supabase/supabase-js";
+
+import {
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+} from "../js/config.js";
+
+const client = createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+function getPetId() {
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    return params.get("id");
+}
+
+async function loadPet() {
+
+    const publicId =
+        getPetId();
+
+    const petDiv =
+        document.getElementById(
+            "pet-info"
+        );
+
+    const {
+        data,
+        error
+    } = await client
+        .from("pets")
+        .select("*")
+        .eq(
+            "public_id",
+            publicId
+        )
+        .single();
+
+    if (error) {
+        petDiv.innerHTML =
+            "Pet não encontrado";
+
+        return;
+    }
+
+    const statusClass =
+        data.status === "missing"
+        ? "missing"
+        : "safe";
+
+    const statusText =
+        data.status === "missing"
+        ? `
+        🚨 PET DESAPARECIDO
+        <br><br>
+        Região:
+        ${data.desaparecido_regiao ?? "-"}
+        <br>
+        ${data.desaparecido_obs ?? ""}
+        <br><br>
+        ${
+            data.tem_recompensa
+            ? `💰 Recompensa:
+               R$ ${data.recompensa}`
+            : ""
+        }
+        `
+        : `
+        ✅ Estou seguro
+        <br>
+        Se encontrou minha tag,
+        fale com meu tutor.
+        `;
+
+    petDiv.innerHTML = `
+    <div class="card">
+
+        <div class="pet-photo">
+            <img src="${
+                data.foto_url ??
+                'https://placehold.co/300'
+            }">
+        </div>
+
+        <div class="pet-name">
+            ${data.nome}
+        </div>
+
+        <div class="pet-meta">
+            ${data.idade ?? "-"} •
+            ${data.raca ?? "-"} •
+            ${data.sexo ?? "-"}
+        </div>
+
+        <div class="status ${statusClass}">
+            ${statusText}
+        </div>
+
+        <div class="buttons">
+
+            <a class="btn call"
+               href="tel:${data.telefone}">
+                📞 Ligar
+            </a>
+
+            <a class="btn whatsapp"
+               href="https://wa.me/${data.whatsapp}"
+               target="_blank">
+
+                💬 WhatsApp
+            </a>
+
+            ${
+                data.telegram
+                ? `
+                <a class="btn telegram"
+                   href="https://t.me/${data.telegram.replace('@','')}"
+                   target="_blank">
+
+                    ✈️ Telegram
+                </a>
+                `
+                : ""
+            }
+
+        </div>
+
+        <div class="section">
+
+            <h3>
+                👤 Tutor
+            </h3>
+
+            <div class="info-card">
+                ${data.tutor}
+            </div>
+
+        </div>
+
+        <div class="section">
+
+            <h3>
+                🩺 Saúde
+            </h3>
+
+            <div class="info-card">
+                <strong>
+                Medicamentos:
+                </strong>
+                <br>
+                ${data.remedios ?? "-"}
+            </div>
+
+            <div class="info-card">
+                <strong>
+                Alergias:
+                </strong>
+                <br>
+                ${data.alergias ?? "-"}
+            </div>
+
+            <div class="info-card">
+                <strong>
+                Cuidados:
+                </strong>
+                <br>
+                ${
+                    data.condicoes_especiais
+                    ?? "-"
+                }
+            </div>
+
+        </div>
+
+    </div>
+    `;
+}
+
+loadPet();
+
+</script>
+
+</body>
+</html>
