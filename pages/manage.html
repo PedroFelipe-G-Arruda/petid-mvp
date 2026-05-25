@@ -1,156 +1,580 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>Gerenciar Pet</title>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1">
+
+<title>Gerenciar Pet</title>
+
+<link rel="stylesheet"
+      href="../css/style.css">
+
+<style>
+
+.manage-card {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,0.08);
+}
+
+.form-group {
+    margin-top: 16px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid #ddd;
+}
+
+.primary-btn {
+    width: 100%;
+    border: none;
+    padding: 18px;
+    border-radius: 16px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 18px;
+}
+
+.missing-btn {
+    background: #dc2626;
+}
+
+.safe-btn {
+    background: #16a34a;
+}
+
+.hidden {
+    display: none;
+}
+
+</style>
 </head>
+
 <body>
 
-    <h1>Gerenciar Pet</h1>
+<div class="container">
 
-    <div id="pet-info">
-        Carregando...
+<div class="manage-card">
+
+<div id="pet-info">
+Carregando...
+</div>
+
+<div id="missing-form"
+     class="hidden">
+
+    <div class="form-group">
+
+        <label>
+            📍 Última região
+        </label>
+
+        <input
+            id="regiao"
+            placeholder=
+            "Ex: Cristo Rei">
+
     </div>
 
-    <button id="missing-btn">
-        🚨 Meu pet fugiu
+    <div class="form-group">
+
+        <label>
+            📝 Observações
+        </label>
+
+        <textarea
+            id="obs"
+            rows="4"
+            placeholder=
+            "Ex: Muito dócil, pode estar assustado">
+        </textarea>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>
+            💰 Tem recompensa?
+        </label>
+
+        <select id="reward">
+
+            <option value="false">
+                Não
+            </option>
+
+            <option value="true">
+                Sim
+            </option>
+
+        </select>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>
+            Valor recompensa
+        </label>
+
+        <input
+            id="reward-value"
+            type="number"
+            placeholder=
+            "100">
+
+    </div>
+
+    <button
+        id="save-missing"
+        class=
+        "primary-btn missing-btn">
+
+        🚨 Salvar desaparecimento
+
     </button>
+    <button
+    id="cancel-btn"
+    class="primary-btn safe-btn">
 
-    <button id="safe-btn">
-        ✅ Pet encontrado
-    </button>
+    Cancelar
 
-    <script type="module">
+</button>
 
-        import { createClient }
-        from "https://esm.sh/@supabase/supabase-js";
+</div>
 
-        import {
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        } from "../js/config.js";
+<button
+    id="missing-btn"
+    class=
+    "primary-btn missing-btn">
 
-        const client =
-            createClient(
-                SUPABASE_URL,
-                SUPABASE_ANON_KEY
-            );
+    🚨 Meu pet fugiu
 
-        function getToken() {
-            const params =
-                new URLSearchParams(
-                    window.location.search
-                );
+</button>
 
-            return params.get("token");
-        }
+<button
+    id="safe-btn"
+    class=
+    "primary-btn safe-btn hidden">
 
-        let pet = null;
+    ✅ Meu pet voltou
 
-        async function loadPet() {
+</button>
 
-            const token =
-                getToken();
+</div>
+</div>
 
-            const {
-                data,
-                error
-            } = await client
-                .from("pets")
-                .select("*")
-                .eq(
-                    "manage_token",
-                    token
-                )
-                .single();
+<script type="module">
 
-            if (error) {
-                document
-                    .getElementById(
-                        "pet-info"
-                    )
-                    .innerHTML =
-                    "Pet não encontrado";
+import { createClient }
+from "https://esm.sh/@supabase/supabase-js";
 
-                return;
-            }
+import {
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+}
+from "../js/config.js";
 
-            pet = data;
+const client =
+createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
 
-            document
-                .getElementById(
-                    "pet-info"
-                )
-                .innerHTML = `
-                    <h2>${pet.nome}</h2>
-                    <p>
-                        Status:
-                        ${pet.status}
-                    </p>
-                `;
-        }
+let pet = null;
 
-        async function updateStatus(
-            newStatus
-        ) {
+function getToken() {
 
-            const {
-                error
-            } = await client
-                .from("pets")
-                .update({
-                    status:
-                        newStatus
-                })
-                .eq(
-                    "id",
-                    pet.id
-                );
+const params =
+new URLSearchParams(
+window.location.search
+);
 
-            if (error) {
-                alert(
-                    "Erro ao atualizar"
-                );
+return params.get(
+"token"
+);
+}
 
-                return;
-            }
+async function loadPet() {
 
-            alert(
-                "Status atualizado!"
-            );
+const token =
+getToken();
 
-            loadPet();
-        }
+const {
+data
+}
+=
+await client
+.from("pets")
+.select("*")
+.eq(
+"manage_token",
+token
+)
+.single();
 
-        document
-            .getElementById(
-                "missing-btn"
-            )
-            .addEventListener(
-                "click",
-                () => {
-                    updateStatus(
-                        "missing"
-                    );
-                }
-            );
+pet = data;
 
-        document
-            .getElementById(
-                "safe-btn"
-            )
-            .addEventListener(
-                "click",
-                () => {
-                    updateStatus(
-                        "safe"
-                    );
-                }
-            );
+renderPet();
+}
 
-        loadPet();
+function renderPet() {
 
-    </script>
+document
+.getElementById(
+"pet-info"
+)
+.innerHTML = `
+<h2>
+🐶 ${pet.nome}
+</h2>
+
+<p>
+Tutor:
+${pet.tutor}
+</p>
+
+<p>
+Status:
+${
+pet.status ===
+"missing"
+?
+"🚨 Perdido"
+:
+"✅ Seguro"
+}
+</p>
+`;
+
+if (
+pet.status ===
+"missing"
+) {
+
+document
+.getElementById(
+"safe-btn"
+)
+.classList
+.remove(
+"hidden"
+);
+
+document
+.getElementById(
+"missing-btn"
+)
+.classList
+.add(
+"hidden"
+);
+
+document
+.getElementById(
+"missing-form"
+)
+.classList
+.remove(
+"hidden"
+);
+
+} else {
+
+document
+.getElementById(
+"missing-btn"
+)
+.classList
+.remove(
+"hidden"
+);
+
+document
+.getElementById(
+"safe-btn"
+)
+.classList
+.add(
+"hidden"
+);
+}
+document
+.getElementById(
+"regiao"
+)
+.value =
+pet
+.desaparecido_regiao
+?? "";
+
+document
+.getElementById(
+"obs"
+)
+.value =
+pet
+.desaparecido_obs
+?? "";
+
+document
+.getElementById(
+"reward"
+)
+.value =
+String(
+pet
+.tem_recompensa
+);
+
+document
+.getElementById(
+"reward-value"
+)
+.value =
+pet
+.recompensa
+?? 0;
+}
+
+document
+.getElementById(
+"missing-btn"
+)
+.addEventListener(
+"click",
+() => {
+
+document
+.getElementById(
+"missing-form"
+)
+.classList
+.remove(
+"hidden"
+);
+
+document
+.getElementById(
+"missing-btn"
+)
+.classList
+.add(
+"hidden"
+);
+
+});
+
+document
+.getElementById(
+"cancel-btn"
+)
+.addEventListener(
+"click",
+() => {
+
+document
+.getElementById(
+"regiao"
+)
+.value =
+pet
+.desaparecido_regiao
+?? "";
+
+document
+.getElementById(
+"obs"
+)
+.value =
+pet
+.desaparecido_obs
+?? "";
+
+document
+.getElementById(
+"reward"
+)
+.value =
+String(
+pet
+.tem_recompensa
+);
+
+document
+.getElementById(
+"reward-value"
+)
+.value =
+pet
+.recompensa
+?? 0;
+
+if (
+pet.status !==
+"missing"
+) {
+
+document
+.getElementById(
+"missing-form"
+)
+.classList
+.add(
+"hidden"
+);
+
+document
+.getElementById(
+"missing-btn"
+)
+.classList
+.remove(
+"hidden"
+);
+
+}
+
+});
+
+document
+.getElementById(
+"save-missing"
+)
+.addEventListener(
+"click",
+async () => {
+
+const regiao =
+document
+.getElementById(
+"regiao"
+)
+.value;
+
+const obs =
+document
+.getElementById(
+"obs"
+)
+.value;
+
+const temReward =
+document
+.getElementById(
+"reward"
+)
+.value
+=== "true";
+
+const reward =
+document
+.getElementById(
+"reward-value"
+)
+.value || 0;
+
+await client
+.from("pets")
+.update({
+
+status:
+"missing",
+
+desaparecido_regiao:
+regiao,
+
+desaparecido_obs:
+obs,
+
+tem_recompensa:
+temReward,
+
+recompensa:
+reward
+
+})
+.eq(
+"id",
+pet.id
+);
+
+alert(
+"Pet marcado como perdido"
+);
+
+loadPet();
+});
+
+document
+.getElementById(
+"safe-btn"
+)
+.addEventListener(
+"click",
+async () => {
+
+await client
+.from("pets")
+.update({
+
+status:
+"safe",
+
+desaparecido_regiao:
+null,
+
+desaparecido_obs:
+null,
+
+tem_recompensa:
+false,
+
+recompensa:
+0
+
+})
+.eq(
+"id",
+pet.id
+);
+
+document
+.getElementById(
+"missing-form"
+)
+.classList
+.add(
+"hidden"
+);
+
+await loadPet();
+
+});
+
+loadPet();
+
+</script>
 
 </body>
 </html>

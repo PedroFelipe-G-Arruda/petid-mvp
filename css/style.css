@@ -111,3 +111,56 @@ body {
 .telegram {
     background: #0ea5e9;
 }
+
+.alert-banner {
+    background: #dc2626;
+    color: white;
+    padding: 20px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    animation: pulse 2s infinite;
+}
+
+.alert-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.alert-subtitle {
+    font-size: 16px;
+    opacity: 0.95;
+}
+
+.reward-box {
+    background: #fff5d6;
+    border: 2px solid #facc15;
+    color: #92400e;
+    padding: 16px;
+    border-radius: 18px;
+    text-align: center;
+    margin-top: 16px;
+    font-weight: bold;
+}
+
+.last-seen {
+    background: #ffeaea;
+    border-radius: 16px;
+    padding: 14px;
+    margin-top: 16px;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.02);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

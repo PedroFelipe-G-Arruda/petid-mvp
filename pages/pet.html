@@ -80,28 +80,61 @@ async function loadPet() {
         : "safe";
 
     const statusText =
-        data.status === "missing"
-        ? `
-        🚨 PET DESAPARECIDO
+    data.status === "missing"
+    ? `
+    <div class="alert-banner">
+
+        <div class="alert-title">
+            🚨 PET DESAPARECIDO
+        </div>
+
+        <div class="alert-subtitle">
+            ${data.nome}
+            está perdido.
+        </div>
+
+    </div>
+
+    <div class="last-seen">
+
+        <strong>
+            📍 Última região vista
+        </strong>
+
         <br><br>
-        Região:
-        ${data.desaparecido_regiao ?? "-"}
-        <br>
-        ${data.desaparecido_obs ?? ""}
-        <br><br>
+
         ${
-            data.tem_recompensa
-            ? `💰 Recompensa:
-               R$ ${data.recompensa}`
-            : ""
+            data.desaparecido_regiao
+            ?? "Não informada"
         }
+
+        <br><br>
+
+        ${
+            data.desaparecido_obs
+            ?? ""
+        }
+
+    </div>
+
+    ${
+        data.tem_recompensa
+        ? `
+        <div class="reward-box">
+            💰 RECOMPENSA
+            <br><br>
+            R$ ${data.recompensa}
+        </div>
         `
-        : `
-        ✅ Estou seguro
-        <br>
-        Se encontrou minha tag,
-        fale com meu tutor.
-        `;
+        : ""
+    }
+    `
+    : `
+    ✅ Estou seguro
+    <br>
+    Se encontrou minha tag,
+    fale com meu tutor.
+    `;
 
     petDiv.innerHTML = `
     <div class="card">
