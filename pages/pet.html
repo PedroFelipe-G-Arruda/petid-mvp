@@ -375,9 +375,25 @@ await fetch(
 const geo =
 await res.json();
 
+const cidadeNome =
+geo.city ?? "";
+
+const estado =
+geo.region ??
+"";
+
 cidade =
-geo.city
-?? "Desconhecida";
+`${cidadeNome}
+- ${estado}`
+.trim();
+
+if (
+!cidadeNome
+) {
+
+cidade =
+"Não identificado";
+}
 
 } catch {}
 

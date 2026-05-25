@@ -181,6 +181,24 @@ Carregando...
 
 </button>
 
+<div
+id="scan-history"
+style="
+margin-top:20px;
+">
+
+<h3>
+👀 Últimos acessos
+</h3>
+
+<div id="scan-list">
+
+Carregando...
+
+</div>
+
+</div>
+
 </div>
 </div>
 
@@ -236,6 +254,8 @@ token
 pet = data;
 
 renderPet();
+
+await loadScans();
 }
 
 function renderPet() {
@@ -571,6 +591,183 @@ document
 await loadPet();
 
 });
+
+function tempoRelativo(
+data
+) {
+
+const scan =
+new Date(
+data + "Z"
+);
+
+const agora =
+new Date();
+
+const diffMs =
+agora -
+scan;
+
+const segundos =
+Math.floor(
+diffMs / 1000
+);
+
+if (
+segundos < 60
+) {
+
+return "Agora";
+}
+
+const minutos =
+Math.floor(
+segundos / 60
+);
+
+if (
+minutos < 60
+) {
+
+return minutos === 1
+? "1 min atrás"
+: `${minutos} min atrás`;
+}
+
+const horas =
+Math.floor(
+minutos / 60
+);
+
+if (
+horas < 24
+) {
+
+return horas === 1
+? "1 hora atrás"
+: `${horas} horas atrás`;
+}
+
+const dias =
+Math.floor(
+horas / 24
+);
+
+return dias === 1
+? "1 dia atrás"
+: `${dias} dias atrás`;
+}
+
+async function loadScans() {
+
+const div =
+document
+.getElementById(
+"scan-list"
+);
+
+if (
+!pet ||
+!pet.id
+) {
+
+div.innerHTML =
+"Nenhum acesso";
+
+return;
+}
+
+try {
+
+const {
+data,
+error
+}
+=
+await client
+.from("scans")
+.select("*")
+.eq(
+"pet_id",
+pet.id
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+)
+.limit(10);
+
+if (
+error
+) {
+
+console.error(
+error
+);
+
+div.innerHTML =
+"Erro ao carregar";
+
+return;
+}
+
+if (
+!data ||
+!data.length
+) {
+
+div.innerHTML =
+"Nenhum acesso";
+
+return;
+}
+
+div.innerHTML =
+data
+.map(
+scan => `
+
+<div
+style="
+background:#f7f8fc;
+padding:14px;
+border-radius:16px;
+margin-top:10px;
+">
+
+📍
+${
+scan.cidade
+?? "Não identificado"
+}
+
+<br>
+
+🕒
+${
+tempoRelativo(
+scan.created_at
+)
+}
+
+</div>
+
+`
+)
+.join("");
+
+} catch(err) {
+
+console.error(
+err
+);
+
+div.innerHTML =
+"Erro ao carregar";
+}
+}
 
 loadPet();
 

@@ -220,18 +220,57 @@ hidden">
 </h3>
 
 <div class="copy-box">
-<label>Link pet</label>
+
+<label>
+Link pet
+</label>
+
 <input id="pet-link">
+
+<button
+class="primary-btn copy-btn"
+onclick="copyField('pet-link')">
+
+📋 Copiar link pet
+
+</button>
+
 </div>
 
 <div class="copy-box">
-<label>Link tutor</label>
+
+<label>
+Link tutor
+</label>
+
 <input id="manage-link">
+
+<button
+class="primary-btn copy-btn"
+onclick="copyField('manage-link')">
+
+📋 Copiar link tutor
+
+</button>
+
 </div>
 
 <div class="copy-box">
-<label>URL NFC</label>
+
+<label>
+URL NFC
+</label>
+
 <input id="nfc-link">
+
+<button
+class="primary-btn copy-btn"
+onclick="copyField('nfc-link')">
+
+📱 Copiar NFC URL
+
+</button>
+
 </div>
 
 <h3 style="margin-top:20px;">
@@ -311,6 +350,44 @@ return Math
 .toString(36)
 .substring(2,8)
 .toUpperCase();
+}
+
+window.copyField =
+async function(
+id
+) {
+
+const input =
+document
+.getElementById(
+id
+);
+
+try {
+
+await navigator
+.clipboard
+.writeText(
+input.value
+);
+
+alert(
+"✅ Copiado"
+);
+
+} catch {
+
+input.select();
+
+document
+.execCommand(
+"copy"
+);
+
+alert(
+"✅ Copiado"
+);
+}
 }
 
 document
