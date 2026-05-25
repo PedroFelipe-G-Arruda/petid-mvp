@@ -45,6 +45,91 @@ function getPetId() {
     return params.get("id");
 }
 
+function calcularIdade(
+nascimento
+) {
+
+if (!nascimento) {
+
+return
+"Idade não informada";
+}
+
+const hoje =
+new Date();
+
+const nasc =
+new Date(
+nascimento
+);
+
+const diffMs =
+hoje - nasc;
+
+const dias =
+Math.floor(
+diffMs /
+(
+1000 * 60 *
+60 * 24
+)
+);
+
+if (
+dias < 30
+) {
+
+if (
+dias <= 1
+) {
+
+return
+"1 dia";
+}
+
+return `${dias}
+dias`;
+}
+
+const meses =
+Math.floor(
+dias / 30
+);
+
+if (
+meses < 12
+) {
+
+if (
+meses === 1
+) {
+
+return
+"1 mês";
+}
+
+return `${meses}
+meses`;
+}
+
+const anos =
+Math.floor(
+meses / 12
+);
+
+if (
+anos === 1
+) {
+
+return
+"1 ano";
+}
+
+return `${anos}
+anos`;
+}
+
+
 async function loadPet() {
 
     const publicId =
@@ -66,6 +151,10 @@ async function loadPet() {
             publicId
         )
         .single();
+
+    await registrarScan(
+data.id
+);
 
     if (error) {
         petDiv.innerHTML =
@@ -151,7 +240,7 @@ async function loadPet() {
         </div>
 
         <div class="pet-meta">
-            ${data.idade ?? "-"} •
+            ${calcularIdade(data.nascimento)} •
             ${data.raca ?? "-"} •
             ${data.sexo ?? "-"}
         </div>
@@ -238,6 +327,89 @@ async function loadPet() {
 
     </div>
     `;
+}
+
+async function registrarScan(
+petId
+) {
+
+try {
+
+const userAgent =
+navigator.userAgent;
+
+const ultimaLeitura =
+localStorage
+.getItem(
+`scan_${petId}`
+);
+
+const agora =
+Date.now();
+
+if (
+ultimaLeitura &&
+(
+agora -
+parseInt(
+ultimaLeitura
+)
+)
+<
+5 * 60 * 1000
+) {
+
+return;
+}
+
+let cidade =
+"Desconhecida";
+
+try {
+
+const res =
+await fetch(
+"https://ipapi.co/json/"
+);
+
+const geo =
+await res.json();
+
+cidade =
+geo.city
+?? "Desconhecida";
+
+} catch {}
+
+await client
+.from("scans")
+.insert({
+
+pet_id:
+petId,
+
+cidade:
+cidade,
+
+user_agent:
+userAgent
+
+});
+
+localStorage
+.setItem(
+`scan_${petId}`,
+agora
+);
+
+} catch(err) {
+
+console.error(
+"Erro scan:",
+err
+);
+
+}
 }
 
 loadPet();

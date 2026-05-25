@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<meta name="viewport"
+      content="width=device-width, initial-scale=1">
+
+<title>Admin PetID</title>
+
+<link rel="stylesheet"
+      href="../css/style.css">
+
+<style>
+
+.admin-card {
+    background: white;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow:
+        0 10px 30px
+        rgba(0,0,0,0.08);
+}
+
+.section-title {
+    margin-top: 28px;
+    margin-bottom: 14px;
+}
+
+.form-group {
+    margin-bottom: 14px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+
+    width: 100%;
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px solid #ddd;
+}
+
+.primary-btn {
+
+    width: 100%;
+    border: none;
+    padding: 18px;
+    border-radius: 16px;
+    background: #2563eb;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.result-card {
+
+    margin-top: 24px;
+    background: #f7f8fc;
+    border-radius: 18px;
+    padding: 20px;
+}
+
+.hidden {
+    display: none;
+}
+
+.copy-box {
+    margin-top: 12px;
+}
+
+.copy-box input {
+
+    width: 100%;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #ddd;
+}
+
+.copy-btn {
+    margin-top: 8px;
+    width: 100%;
+}
+
+.qr-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 16px;
+}
+
+#qr-canvas {
+    border-radius: 16px;
+    background: white;
+    padding: 12px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="admin-card">
+
+<h2>
+🐶 Criar Pet
+</h2>
+
+<div class="form-group">
+<label>Foto do pet</label>
+<input type="file" id="foto">
+</div>
+
+<div class="form-group">
+<label>Nome</label>
+<input id="nome">
+</div>
+
+<div class="form-group">
+<label>Data nascimento</label>
+<input
+type="date"
+id="nascimento">
+</div>
+
+<div class="form-group">
+<label>Raça</label>
+<input id="raca">
+</div>
+
+<div class="form-group">
+<label>Sexo</label>
+<select id="sexo">
+<option>Macho</option>
+<option>Fêmea</option>
+</select>
+</div>
+
+<h3 class="section-title">
+🩺 Saúde
+</h3>
+
+<div class="form-group">
+<label>Alergias</label>
+<textarea
+id="alergias">
+</textarea>
+</div>
+
+<div class="form-group">
+<label>Remédios</label>
+<textarea
+id="remedios">
+</textarea>
+</div>
+
+<div class="form-group">
+<label>Cuidados especiais</label>
+<textarea
+id="cuidados">
+</textarea>
+</div>
+
+<div class="form-group">
+<label>Observações do pet</label>
+<textarea
+id="obsPet">
+</textarea>
+</div>
+
+<h3 class="section-title">
+👤 Tutor
+</h3>
+
+<div class="form-group">
+<label>Nome tutor</label>
+<input id="tutor">
+</div>
+
+<div class="form-group">
+<label>Telefone</label>
+<input id="telefone">
+</div>
+
+<div class="form-group">
+<label>WhatsApp</label>
+<input id="whatsapp">
+</div>
+
+<div class="form-group">
+<label>Telegram</label>
+<input id="telegram">
+</div>
+
+<button
+id="create-btn"
+class="primary-btn">
+
+Criar Pet
+
+</button>
+
+<div
+id="result"
+class="
+result-card
+hidden">
+
+<h3>
+✅ Pet criado
+</h3>
+
+<div class="copy-box">
+<label>Link pet</label>
+<input id="pet-link">
+</div>
+
+<div class="copy-box">
+<label>Link tutor</label>
+<input id="manage-link">
+</div>
+
+<div class="copy-box">
+<label>URL NFC</label>
+<input id="nfc-link">
+</div>
+
+<h3 style="margin-top:20px;">
+▣ QR Code
+</h3>
+
+<div class="qr-wrapper">
+
+    <canvas
+        id="qr-canvas">
+    </canvas>
+
+</div>
+
+<button
+id="download-qr"
+class="primary-btn">
+
+Baixar QR PNG
+
+</button>
+
+</div>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+
+<script type="module">
+
+import { createClient }
+from "https://esm.sh/@supabase/supabase-js";
+
+import {
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+}
+from "../js/config.js";
+
+const client =
+createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+const ADMIN_KEY =
+"pedro-pet-2026";
+
+function checkAdmin() {
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const key =
+params.get("key");
+
+if (
+key !==
+ADMIN_KEY
+) {
+
+document.body
+.innerHTML =
+"<h1>Acesso negado</h1>";
+}
+}
+
+checkAdmin();
+
+function generateId() {
+
+return Math
+.random()
+.toString(36)
+.substring(2,8)
+.toUpperCase();
+}
+
+document
+.getElementById(
+"create-btn"
+)
+.addEventListener(
+"click",
+async () => {
+
+try {
+
+const publicId =
+generateId();
+
+const manageToken =
+crypto
+.randomUUID();
+
+let fotoUrl =
+null;
+
+const foto =
+document
+.getElementById(
+"foto"
+)
+.files[0];
+
+if (foto) {
+
+const fileName =
+`${publicId}.jpg`;
+
+const {
+error
+}
+=
+await client
+.storage
+.from("pets")
+.upload(
+fileName,
+foto
+);
+
+if (error)
+throw error;
+
+fotoUrl =
+`${SUPABASE_URL}/storage/v1/object/public/pets/${fileName}`;
+}
+
+const {
+error
+}
+=
+await client
+.from("pets")
+.insert({
+
+public_id:
+publicId,
+
+manage_token:
+manageToken,
+
+nome:
+document
+.getElementById(
+"nome"
+)
+.value,
+
+nascimento:
+document
+.getElementById(
+"nascimento"
+)
+.value,
+
+raca:
+document
+.getElementById(
+"raca"
+)
+.value,
+
+sexo:
+document
+.getElementById(
+"sexo"
+)
+.value,
+
+alergias:
+document
+.getElementById(
+"alergias"
+)
+.value,
+
+remedios:
+document
+.getElementById(
+"remedios"
+)
+.value,
+
+condicoes_especiais:
+document
+.getElementById(
+"cuidados"
+)
+.value,
+
+observacao_pet:
+document
+.getElementById(
+"obsPet"
+)
+.value,
+
+tutor:
+document
+.getElementById(
+"tutor"
+)
+.value,
+
+telefone:
+document
+.getElementById(
+"telefone"
+)
+.value,
+
+whatsapp:
+document
+.getElementById(
+"whatsapp"
+)
+.value,
+
+telegram:
+document
+.getElementById(
+"telegram"
+)
+.value,
+
+foto_url:
+fotoUrl,
+
+status:
+"safe"
+
+});
+
+if (error)
+throw error;
+
+const base =
+window.location.origin;
+
+const petUrl =
+`${base}/pages/pet.html?id=${publicId}`;
+
+const manageUrl =
+`${base}/pages/manage.html?token=${manageToken}`;
+
+document
+.getElementById(
+"pet-link"
+)
+.value =
+petUrl;
+
+document
+.getElementById(
+"manage-link"
+)
+.value =
+manageUrl;
+
+document
+.getElementById(
+"nfc-link"
+)
+.value =
+petUrl;
+
+document
+.getElementById(
+"result"
+)
+.classList
+.remove(
+"hidden"
+);
+
+const canvas =
+document
+.getElementById(
+"qr-canvas"
+);
+
+QRCode.toCanvas(
+canvas,
+petUrl,
+{
+width: 300,
+margin: 3
+}
+);
+
+alert(
+"Pet criado!"
+);
+
+} catch(err) {
+
+console.error(
+err
+);
+
+alert(
+"Erro ao criar pet"
+);
+
+}
+
+});
+
+document
+.getElementById(
+"download-qr"
+)
+.addEventListener(
+"click",
+() => {
+
+const canvas =
+document
+.getElementById(
+"qr-canvas"
+);
+
+const link =
+document
+.createElement(
+"a"
+);
+
+link.download =
+"pet-qrcode.png";
+
+link.href =
+canvas.toDataURL(
+"image/png"
+);
+
+link.click();
+
+});
+
+</script>
+
+</body>
+</html>
