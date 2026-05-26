@@ -3,103 +3,205 @@
 <head>
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1">
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
 
-<title>Admin PetID</title>
+<title>
+PetID Admin
+</title>
 
-<link rel="stylesheet"
-      href="../css/style.css">
+<link
+rel="stylesheet"
+href="../css/style.css">
 
 <style>
 
-.admin-card {
-    background: white;
-    border-radius: 24px;
-    padding: 24px;
-    box-shadow:
-        0 10px 30px
-        rgba(0,0,0,0.08);
+*{
+box-sizing:border-box;
 }
 
-.section-title {
-    margin-top: 28px;
-    margin-bottom: 14px;
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f6fb;
 }
 
-.form-group {
-    margin-bottom: 14px;
+.container{
+max-width:1200px;
+margin:0 auto;
+padding:24px;
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 6px;
-    font-weight: bold;
+.admin-card{
+background:white;
+border-radius:24px;
+padding:24px;
+box-shadow:
+0 10px 30px
+rgba(0,0,0,0.08);
 }
 
-.form-group input,
-.form-group textarea,
-.form-group select {
-
-    width: 100%;
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid #ddd;
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px;
+margin-bottom:24px;
+flex-wrap:wrap;
 }
 
-.primary-btn {
-
-    width: 100%;
-    border: none;
-    padding: 18px;
-    border-radius: 16px;
-    background: #2563eb;
-    color: white;
-    font-weight: bold;
-    font-size: 16px;
-    cursor: pointer;
-    margin-top: 20px;
+.primary-btn{
+border:none;
+padding:14px 18px;
+border-radius:16px;
+background:#2563eb;
+color:white;
+font-weight:bold;
+font-size:15px;
+cursor:pointer;
+text-decoration:none;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+transition:.2s;
 }
 
-.result-card {
-
-    margin-top: 24px;
-    background: #f7f8fc;
-    border-radius: 18px;
-    padding: 20px;
+.primary-btn:hover{
+transform:translateY(-1px);
 }
 
-.hidden {
-    display: none;
+.green-btn{
+background:#16a34a;
 }
 
-.copy-box {
-    margin-top: 12px;
+.orange-btn{
+background:#ea580c;
 }
 
-.copy-box input {
-
-    width: 100%;
-    padding: 12px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
+.gray-btn{
+background:#64748b;
 }
 
-.copy-btn {
-    margin-top: 8px;
-    width: 100%;
+.pet-card{
+background:white;
+border-radius:24px;
+padding:20px;
+margin-top:18px;
+box-shadow:
+0 6px 20px
+rgba(0,0,0,0.06);
+border:1px solid #eee;
 }
 
-.qr-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-top: 16px;
+.pet-header{
+display:flex;
+gap:16px;
+align-items:center;
 }
 
-#qr-canvas {
-    border-radius: 16px;
-    background: white;
-    padding: 12px;
+.pet-photo{
+width:80px;
+height:80px;
+border-radius:50%;
+object-fit:cover;
+background:#ddd;
+}
+
+.pet-status{
+margin-top:6px;
+font-weight:bold;
+}
+
+.safe{
+color:#16a34a;
+}
+
+.missing{
+color:#dc2626;
+}
+
+.pet-actions{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(160px,1fr));
+gap:10px;
+margin-top:18px;
+}
+
+.modal{
+display:none;
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:
+rgba(0,0,0,.7);
+justify-content:center;
+align-items:center;
+z-index:999;
+padding:20px;
+}
+
+.modal-content{
+background:white;
+border-radius:24px;
+padding:24px;
+max-width:420px;
+width:100%;
+text-align:center;
+position:relative;
+}
+
+.close-modal{
+position:absolute;
+right:16px;
+top:16px;
+cursor:pointer;
+font-size:24px;
+font-weight:bold;
+}
+
+.qr-wrapper{
+display:flex;
+justify-content:center;
+margin:20px 0;
+}
+
+#qr-canvas{
+background:white;
+padding:16px;
+border-radius:20px;
+}
+
+.empty-state{
+text-align:center;
+padding:50px;
+color:#666;
+}
+
+.toast{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#111827;
+color:white;
+padding:14px 20px;
+border-radius:14px;
+display:none;
+z-index:9999;
+font-weight:bold;
+}
+
+@media(max-width:700px){
+
+.pet-header{
+flex-direction:column;
+text-align:center;
+}
+
 }
 
 </style>
@@ -111,191 +213,94 @@
 
 <div class="admin-card">
 
+<div class="header">
+
 <h2>
-🐶 Criar Pet
+🐶 Pets cadastrados
 </h2>
 
-<div class="form-group">
-<label>Foto do pet</label>
-<input type="file" id="foto">
-</div>
-
-<div class="form-group">
-<label>Nome</label>
-<input id="nome">
-</div>
-
-<div class="form-group">
-<label>Data nascimento</label>
-<input
-type="date"
-id="nascimento">
-</div>
-
-<div class="form-group">
-<label>Raça</label>
-<input id="raca">
-</div>
-
-<div class="form-group">
-<label>Sexo</label>
-<select id="sexo">
-<option>Macho</option>
-<option>Fêmea</option>
-</select>
-</div>
-
-<h3 class="section-title">
-🩺 Saúde
-</h3>
-
-<div class="form-group">
-<label>Alergias</label>
-<textarea
-id="alergias">
-</textarea>
-</div>
-
-<div class="form-group">
-<label>Remédios</label>
-<textarea
-id="remedios">
-</textarea>
-</div>
-
-<div class="form-group">
-<label>Cuidados especiais</label>
-<textarea
-id="cuidados">
-</textarea>
-</div>
-
-<div class="form-group">
-<label>Observações do pet</label>
-<textarea
-id="obsPet">
-</textarea>
-</div>
-
-<h3 class="section-title">
-👤 Tutor
-</h3>
-
-<div class="form-group">
-<label>Nome tutor</label>
-<input id="tutor">
-</div>
-
-<div class="form-group">
-<label>Telefone</label>
-<input id="telefone">
-</div>
-
-<div class="form-group">
-<label>WhatsApp</label>
-<input id="whatsapp">
-</div>
-
-<div class="form-group">
-<label>Telegram</label>
-<input id="telegram">
-</div>
-
-<button
-id="create-btn"
+<a
+href="./new-pet.html?key=pedro-pet-2026"
 class="primary-btn">
 
-Criar Pet
++ Novo Pet
 
-</button>
+</a>
+
+</div>
 
 <div
-id="result"
-class="
-result-card
-hidden">
+style="
+margin-bottom:20px;
+">
 
-<h3>
-✅ Pet criado
-</h3>
+<input
+id="search-input"
+placeholder="🔍 Buscar pet..."
 
-<div class="copy-box">
-
-<label>
-Link pet
-</label>
-
-<input id="pet-link">
-
-<button
-class="primary-btn copy-btn"
-onclick="copyField('pet-link')">
-
-📋 Copiar link pet
-
-</button>
+style="
+width:100%;
+padding:16px;
+border-radius:16px;
+border:1px solid #ddd;
+font-size:16px;
+">
 
 </div>
 
-<div class="copy-box">
-
-<label>
-Link tutor
-</label>
-
-<input id="manage-link">
-
-<button
-class="primary-btn copy-btn"
-onclick="copyField('manage-link')">
-
-📋 Copiar link tutor
-
-</button>
 
 </div>
 
-<div class="copy-box">
-
-<label>
-URL NFC
-</label>
-
-<input id="nfc-link">
-
-<button
-class="primary-btn copy-btn"
-onclick="copyField('nfc-link')">
-
-📱 Copiar NFC URL
-
-</button>
+<div id="pet-list">
+Carregando pets...
+</div>
 
 </div>
 
-<h3 style="margin-top:20px;">
-▣ QR Code
-</h3>
+</div>
+
+<div
+id="qr-modal"
+class="modal">
+
+<div class="modal-content">
+
+<span
+class="close-modal"
+onclick="closeQR()">
+
+×
+
+</span>
+
+<h2>
+QR Code do Pet
+</h2>
 
 <div class="qr-wrapper">
 
-    <canvas
-        id="qr-canvas">
-    </canvas>
+<canvas
+id="qr-canvas">
+</canvas>
 
 </div>
 
 <button
-id="download-qr"
-class="primary-btn">
+class="primary-btn"
+onclick="downloadQR()">
 
-Baixar QR PNG
+⬇️ Baixar PNG
 
 </button>
 
 </div>
 
 </div>
+
+<div
+id="toast"
+class="toast">
+Copiado
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
@@ -303,13 +308,15 @@ Baixar QR PNG
 <script type="module">
 
 import { createClient }
-from "https://esm.sh/@supabase/supabase-js";
+from
+"https://esm.sh/@supabase/supabase-js";
 
 import {
 SUPABASE_URL,
 SUPABASE_ANON_KEY
 }
-from "../js/config.js";
+from
+"../js/config.js";
 
 const client =
 createClient(
@@ -320,7 +327,7 @@ SUPABASE_ANON_KEY
 const ADMIN_KEY =
 "pedro-pet-2026";
 
-function checkAdmin() {
+function checkAdmin(){
 
 const params =
 new URLSearchParams(
@@ -330,315 +337,109 @@ window.location.search
 const key =
 params.get("key");
 
-if (
-key !==
-ADMIN_KEY
-) {
+if(
+key !== ADMIN_KEY
+){
 
-document.body
-.innerHTML =
+document.body.innerHTML =
 "<h1>Acesso negado</h1>";
-}
-}
 
-checkAdmin();
-
-function generateId() {
-
-return Math
-.random()
-.toString(36)
-.substring(2,8)
-.toUpperCase();
+return false;
 }
 
-window.copyField =
-async function(
-id
-) {
+return true;
+}
 
-const input =
-document
-.getElementById(
-id
+function showToast(text){
+
+const toast =
+document.getElementById(
+"toast"
 );
 
-try {
+toast.innerText =
+text;
+
+toast.style.display =
+"block";
+
+setTimeout(() => {
+
+toast.style.display =
+"none";
+
+},2000);
+
+}
+
+async function copyText(text){
+
+try{
 
 await navigator
 .clipboard
-.writeText(
-input.value
-);
+.writeText(text);
 
-alert(
+showToast(
 "✅ Copiado"
 );
 
-} catch {
+}catch{
 
-input.select();
-
-document
-.execCommand(
-"copy"
+showToast(
+"Erro ao copiar"
 );
 
-alert(
-"✅ Copiado"
-);
-}
 }
 
-document
-.getElementById(
-"create-btn"
-)
-.addEventListener(
-"click",
-async () => {
-
-try {
-
-const publicId =
-generateId();
-
-const manageToken =
-crypto
-.randomUUID();
-
-let fotoUrl =
-null;
-
-const foto =
-document
-.getElementById(
-"foto"
-)
-.files[0];
-
-if (foto) {
-
-const fileName =
-`${publicId}.jpg`;
-
-const {
-error
 }
-=
-await client
-.storage
-.from("pets")
-.upload(
-fileName,
-foto
+
+window.openQR =
+function(url){
+
+const modal =
+document.getElementById(
+"qr-modal"
 );
 
-if (error)
-throw error;
-
-fotoUrl =
-`${SUPABASE_URL}/storage/v1/object/public/pets/${fileName}`;
-}
-
-const {
-error
-}
-=
-await client
-.from("pets")
-.insert({
-
-public_id:
-publicId,
-
-manage_token:
-manageToken,
-
-nome:
-document
-.getElementById(
-"nome"
-)
-.value,
-
-nascimento:
-document
-.getElementById(
-"nascimento"
-)
-.value,
-
-raca:
-document
-.getElementById(
-"raca"
-)
-.value,
-
-sexo:
-document
-.getElementById(
-"sexo"
-)
-.value,
-
-alergias:
-document
-.getElementById(
-"alergias"
-)
-.value,
-
-remedios:
-document
-.getElementById(
-"remedios"
-)
-.value,
-
-condicoes_especiais:
-document
-.getElementById(
-"cuidados"
-)
-.value,
-
-observacao_pet:
-document
-.getElementById(
-"obsPet"
-)
-.value,
-
-tutor:
-document
-.getElementById(
-"tutor"
-)
-.value,
-
-telefone:
-document
-.getElementById(
-"telefone"
-)
-.value,
-
-whatsapp:
-document
-.getElementById(
-"whatsapp"
-)
-.value,
-
-telegram:
-document
-.getElementById(
-"telegram"
-)
-.value,
-
-foto_url:
-fotoUrl,
-
-status:
-"safe"
-
-});
-
-if (error)
-throw error;
-
-const base =
-window.location.origin;
-
-const petUrl =
-`${base}/pages/pet.html?id=${publicId}`;
-
-const manageUrl =
-`${base}/pages/manage.html?token=${manageToken}`;
-
-document
-.getElementById(
-"pet-link"
-)
-.value =
-petUrl;
-
-document
-.getElementById(
-"manage-link"
-)
-.value =
-manageUrl;
-
-document
-.getElementById(
-"nfc-link"
-)
-.value =
-petUrl;
-
-document
-.getElementById(
-"result"
-)
-.classList
-.remove(
-"hidden"
-);
-
-const canvas =
-document
-.getElementById(
-"qr-canvas"
-);
+modal.style.display =
+"flex";
 
 QRCode.toCanvas(
-canvas,
-petUrl,
+document.getElementById(
+"qr-canvas"
+),
+url,
 {
-width: 300,
-margin: 3
+width:280,
+margin:3
 }
 );
 
-alert(
-"Pet criado!"
-);
+};
 
-} catch(err) {
-
-console.error(
-err
-);
-
-alert(
-"Erro ao criar pet"
-);
-
-}
-
-});
+window.closeQR =
+function(){
 
 document
 .getElementById(
-"download-qr"
+"qr-modal"
 )
-.addEventListener(
-"click",
-() => {
+.style.display =
+"none";
+
+};
+
+window.downloadQR =
+function(){
 
 const canvas =
-document
-.getElementById(
+document.getElementById(
 "qr-canvas"
 );
 
 const link =
-document
-.createElement(
+document.createElement(
 "a"
 );
 
@@ -652,7 +453,340 @@ canvas.toDataURL(
 
 link.click();
 
+};
+
+let allPets = [];
+
+async function loadPets(){
+
+const div =
+document.getElementById(
+"pet-list"
+);
+
+try{
+
+const {
+data,
+error
+}
+=
+await client
+.from("pets")
+.select("*")
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+if(error)
+throw error;
+
+allPets =
+data;
+
+if(
+!data ||
+!data.length
+){
+
+div.innerHTML =
+`
+<div class="empty-state">
+
+<h3>
+Nenhum pet cadastrado
+</h3>
+
+</div>
+`;
+
+return;
+}
+
+renderPets(
+allPets
+);
+
+}catch(err){
+
+console.error(
+err
+);
+
+div.innerHTML =
+"Erro ao carregar pets";
+
+}
+}
+
+function renderPets(
+pets
+){
+
+const div =
+document.getElementById(
+"pet-list"
+);
+
+if(
+!pets.length
+){
+
+div.innerHTML =
+`
+<div class="empty-state">
+
+<h3>
+Nenhum pet encontrado
+</h3>
+
+</div>
+`;
+
+return;
+}
+
+div.innerHTML =
+pets.map(
+pet => {
+
+const petUrl =
+`${window.location.origin}/pages/pet.html?id=${pet.public_id}`;
+
+const manageUrl =
+`${window.location.origin}/pages/manage.html?token=${pet.manage_token}`;
+
+const editUrl =
+`${window.location.origin}/pages/new-pet.html?key=${ADMIN_KEY}&id=${pet.public_id}`;
+
+return `
+
+<div class="pet-card">
+
+<div class="pet-header">
+
+<img
+class="pet-photo"
+src="${
+pet.foto_url ||
+'https://placehold.co/200'
+}">
+
+<div>
+
+<h2>
+${pet.nome ?? "Sem nome"}
+</h2>
+
+<div
+class="
+pet-status
+${
+pet.status ===
+"missing"
+?
+"missing"
+:
+"safe"
+}
+">
+
+${
+pet.status ===
+"missing"
+?
+"🚨 Perdido"
+:
+"✅ Seguro"
+}
+
+</div>
+
+<p>
+Tutor:
+<b>
+${pet.tutor ?? "-"}
+</b>
+</p>
+
+</div>
+
+</div>
+
+<div class="pet-actions">
+
+<a
+href="${petUrl}"
+target="_blank"
+class="primary-btn">
+
+🐶 Abrir Pet
+
+</a>
+
+<a
+href="${manageUrl}"
+target="_blank"
+class="
+primary-btn
+green-btn">
+
+⚙️ Gerenciar
+
+</a>
+
+<a
+href="${editUrl}"
+class="
+primary-btn
+orange-btn">
+
+✏️ Editar
+
+</a>
+
+<button
+class="
+primary-btn
+gray-btn"
+
+onclick="
+copyPetLink(
+'${pet.public_id}'
+)
+">
+
+📋 Link Pet
+
+</button>
+
+<button
+class="
+primary-btn
+gray-btn"
+
+onclick="
+copyTutorLink(
+'${pet.manage_token}'
+)
+">
+
+👤 Link Tutor
+
+</button>
+
+<button
+class="
+primary-btn
+gray-btn"
+
+onclick="
+openPetQR(
+'${pet.public_id}'
+)
+">
+
+▣ QR Code
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+)
+.join("");
+
+}
+
+window.copyPetLink =
+function(
+publicId
+){
+
+const url =
+`${window.location.origin}/pages/pet.html?id=${publicId}`;
+
+copyText(url);
+
+};
+
+window.copyTutorLink =
+function(
+token
+){
+
+const url =
+`${window.location.origin}/pages/manage.html?token=${token}`;
+
+copyText(url);
+
+};
+
+window.openPetQR =
+function(
+publicId
+){
+
+const url =
+`${window.location.origin}/pages/pet.html?id=${publicId}`;
+
+openQR(url);
+
+};
+
+document
+.getElementById(
+"search-input"
+)
+.addEventListener(
+"input",
+event => {
+
+const term =
+event.target.value
+.toLowerCase()
+.trim();
+
+const filtered =
+allPets.filter(
+pet =>
+
+(
+pet.nome ?? ""
+)
+.toLowerCase()
+.includes(term)
+
+||
+
+(
+pet.tutor ?? ""
+)
+.toLowerCase()
+.includes(term)
+
+);
+
+renderPets(
+filtered
+);
+
 });
+
+if(
+checkAdmin()
+){
+
+loadPets();
+
+}
 
 </script>
 

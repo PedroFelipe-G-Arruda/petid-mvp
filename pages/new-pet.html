@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Novo Pet
+</title>
+
+<link
+rel="stylesheet"
+href="../css/style.css">
+
+<style>
+
+*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+font-family:Arial,sans-serif;
+background:#f4f6fb;
+}
+
+.container{
+max-width:900px;
+margin:0 auto;
+padding:24px;
+}
+
+.card{
+background:white;
+border-radius:24px;
+padding:24px;
+box-shadow:
+0 10px 30px
+rgba(0,0,0,.08);
+}
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:24px;
+gap:10px;
+flex-wrap:wrap;
+}
+
+.primary-btn{
+border:none;
+padding:14px 18px;
+border-radius:16px;
+background:#2563eb;
+color:white;
+font-weight:bold;
+font-size:15px;
+cursor:pointer;
+text-decoration:none;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
+transition:.2s;
+}
+
+.primary-btn:hover{
+transform:translateY(-1px);
+}
+
+.green-btn{
+background:#16a34a;
+}
+
+.form-grid{
+display:grid;
+grid-template-columns:
+1fr 1fr;
+gap:16px;
+}
+
+.full-width{
+grid-column:1/-1;
+}
+
+.input-group{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+label{
+font-weight:bold;
+font-size:14px;
+}
+
+input,
+select,
+textarea{
+padding:14px;
+border-radius:14px;
+border:1px solid #ddd;
+font-size:15px;
+width:100%;
+}
+
+textarea{
+min-height:90px;
+resize:vertical;
+}
+
+.section-title{
+margin-top:26px;
+margin-bottom:10px;
+font-size:20px;
+}
+
+.preview{
+width:120px;
+height:120px;
+border-radius:20px;
+object-fit:cover;
+background:#ddd;
+display:block;
+margin-top:10px;
+}
+
+.toast{
+position:fixed;
+bottom:20px;
+right:20px;
+background:#111827;
+color:white;
+padding:14px 20px;
+border-radius:14px;
+display:none;
+font-weight:bold;
+z-index:9999;
+}
+
+@media(max-width:700px){
+
+.form-grid{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<div class="header">
+
+<h2 id="page-title">
+🐶 Novo Pet
+</h2>
+
+<a
+href="./admin.html?key=pedro-pet-2026"
+class="primary-btn">
+
+← Voltar
+
+</a>
+
+</div>
+
+<div class="form-grid">
+
+<div class="input-group full-width">
+
+<label>
+Foto do Pet
+</label>
+
+<input
+type="file"
+id="foto">
+
+<img
+id="preview"
+class="preview"
+src="https://placehold.co/200x200">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Nome
+</label>
+
+<input id="nome">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Nascimento
+</label>
+
+<input
+type="date"
+id="nascimento">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Raça
+</label>
+
+<input id="raca">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Sexo
+</label>
+
+<select id="sexo">
+
+<option value="">
+Selecione
+</option>
+
+<option>
+Macho
+</option>
+
+<option>
+Fêmea
+</option>
+
+</select>
+
+</div>
+
+<div class="full-width">
+
+<h3 class="section-title">
+🩺 Saúde
+</h3>
+
+</div>
+
+<div class="input-group">
+
+<label>
+Alergias
+</label>
+
+<textarea
+id="alergias">
+</textarea>
+
+</div>
+
+<div class="input-group">
+
+<label>
+Remédios
+</label>
+
+<textarea
+id="remedios">
+</textarea>
+
+</div>
+
+<div class="input-group full-width">
+
+<label>
+Cuidados especiais
+</label>
+
+<textarea
+id="cuidados">
+</textarea>
+
+</div>
+
+<div class="input-group full-width">
+
+<label>
+Observações
+</label>
+
+<textarea
+id="obsPet">
+</textarea>
+
+</div>
+
+<div class="full-width">
+
+<h3 class="section-title">
+👤 Tutor
+</h3>
+
+</div>
+
+<div class="input-group">
+
+<label>
+Tutor
+</label>
+
+<input id="tutor">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Telefone
+</label>
+
+<input id="telefone">
+
+</div>
+
+<div class="input-group">
+
+<label>
+WhatsApp
+</label>
+
+<input id="whatsapp">
+
+</div>
+
+<div class="input-group">
+
+<label>
+Telegram
+</label>
+
+<input id="telegram">
+
+</div>
+
+<div class="full-width">
+
+<button
+id="save-btn"
+class="
+primary-btn
+green-btn"
+style="
+width:100%;
+margin-top:16px;
+">
+
+💾 Salvar Pet
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div
+id="toast"
+class="toast">
+Salvo
+</div>
+
+<script type="module">
+
+import { createClient }
+from
+"https://esm.sh/@supabase/supabase-js";
+
+import {
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+}
+from
+"../js/config.js";
+
+const client =
+createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+const ADMIN_KEY =
+"pedro-pet-2026";
+
+let editPet =
+null;
+
+function showToast(text){
+
+const toast =
+document.getElementById(
+"toast"
+);
+
+toast.innerText =
+text;
+
+toast.style.display =
+"block";
+
+setTimeout(() => {
+
+toast.style.display =
+"none";
+
+},2000);
+
+}
+
+function checkAdmin(){
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const key =
+params.get("key");
+
+if(
+key !== ADMIN_KEY
+){
+
+document.body.innerHTML =
+"<h1>Acesso negado</h1>";
+
+return false;
+}
+
+return true;
+}
+
+function getPetId(){
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+return params.get(
+"id"
+);
+}
+
+function generateId(){
+
+return Math.random()
+.toString(36)
+.substring(2,8)
+.toUpperCase();
+}
+
+document
+.getElementById(
+"foto"
+)
+.addEventListener(
+"change",
+event => {
+
+const file =
+event.target.files[0];
+
+if(!file)
+return;
+
+document
+.getElementById(
+"preview"
+)
+.src =
+URL.createObjectURL(
+file
+);
+
+});
+
+async function loadPetForEdit(){
+
+const petId =
+getPetId();
+
+if(!petId)
+return;
+
+try{
+
+const {
+data,
+error
+}
+=
+await client
+.from("pets")
+.select("*")
+.eq(
+"public_id",
+petId
+)
+.single();
+
+if(error)
+throw error;
+
+if(!data)
+return;
+
+editPet =
+data;
+
+document
+.getElementById(
+"page-title"
+)
+.innerText =
+"✏️ Editar Pet";
+
+document
+.getElementById(
+"nome"
+)
+.value =
+data.nome ?? "";
+
+document
+.getElementById(
+"nascimento"
+)
+.value =
+data.nascimento ?? "";
+
+document
+.getElementById(
+"raca"
+)
+.value =
+data.raca ?? "";
+
+document
+.getElementById(
+"sexo"
+)
+.value =
+data.sexo ?? "";
+
+document
+.getElementById(
+"alergias"
+)
+.value =
+data.alergias ?? "";
+
+document
+.getElementById(
+"remedios"
+)
+.value =
+data.remedios ?? "";
+
+document
+.getElementById(
+"cuidados"
+)
+.value =
+data.condicoes_especiais
+?? "";
+
+document
+.getElementById(
+"obsPet"
+)
+.value =
+data.observacao_pet
+?? "";
+
+document
+.getElementById(
+"tutor"
+)
+.value =
+data.tutor ?? "";
+
+document
+.getElementById(
+"telefone"
+)
+.value =
+data.telefone ?? "";
+
+document
+.getElementById(
+"whatsapp"
+)
+.value =
+data.whatsapp ?? "";
+
+document
+.getElementById(
+"telegram"
+)
+.value =
+data.telegram ?? "";
+
+if(
+data.foto_url
+){
+
+document
+.getElementById(
+"preview"
+)
+.src =
+data.foto_url;
+
+}
+
+}catch(err){
+
+console.error(
+err
+);
+
+showToast(
+"Erro ao carregar pet"
+);
+
+}
+
+}
+
+document
+.getElementById(
+"save-btn"
+)
+.addEventListener(
+"click",
+async () => {
+
+try{
+
+let fotoUrl =
+editPet?.foto_url
+?? null;
+
+const foto =
+document
+.getElementById(
+"foto"
+)
+.files[0];
+
+let publicId =
+editPet?.public_id;
+
+if(
+!publicId
+){
+
+publicId =
+generateId();
+
+}
+
+if(foto){
+
+const fileName =
+`${publicId}.jpg`;
+
+const {
+error:
+uploadError
+}
+=
+await client
+.storage
+.from("pets")
+.upload(
+fileName,
+foto,
+{
+upsert:true
+}
+);
+
+if(
+uploadError
+)
+throw uploadError;
+
+fotoUrl =
+`${SUPABASE_URL}/storage/v1/object/public/pets/${fileName}`;
+
+}
+
+const petData = {
+
+nome:
+document
+.getElementById(
+"nome"
+)
+.value,
+
+nascimento:
+document
+.getElementById(
+"nascimento"
+)
+.value,
+
+raca:
+document
+.getElementById(
+"raca"
+)
+.value,
+
+sexo:
+document
+.getElementById(
+"sexo"
+)
+.value,
+
+alergias:
+document
+.getElementById(
+"alergias"
+)
+.value,
+
+remedios:
+document
+.getElementById(
+"remedios"
+)
+.value,
+
+condicoes_especiais:
+document
+.getElementById(
+"cuidados"
+)
+.value,
+
+observacao_pet:
+document
+.getElementById(
+"obsPet"
+)
+.value,
+
+tutor:
+document
+.getElementById(
+"tutor"
+)
+.value,
+
+telefone:
+document
+.getElementById(
+"telefone"
+)
+.value,
+
+whatsapp:
+document
+.getElementById(
+"whatsapp"
+)
+.value,
+
+telegram:
+document
+.getElementById(
+"telegram"
+)
+.value,
+
+foto_url:
+fotoUrl
+
+};
+
+let error;
+
+if(editPet){
+
+const result =
+await client
+.from("pets")
+.update(
+petData
+)
+.eq(
+"public_id",
+editPet.public_id
+);
+
+error =
+result.error;
+
+}else{
+
+petData.public_id =
+publicId;
+
+petData.manage_token =
+crypto.randomUUID();
+
+petData.status =
+"safe";
+
+const result =
+await client
+.from("pets")
+.insert(
+petData
+);
+
+error =
+result.error;
+
+}
+
+if(error)
+throw error;
+
+showToast(
+editPet
+?
+"✅ Pet atualizado"
+:
+"✅ Pet criado"
+);
+
+setTimeout(() => {
+
+window.location.href =
+`./admin.html?key=${ADMIN_KEY}`;
+
+},1200);
+
+}catch(err){
+
+console.error(
+err
+);
+
+showToast(
+"Erro ao salvar"
+);
+
+}
+
+});
+
+if(
+checkAdmin()
+){
+
+loadPetForEdit();
+
+}
+
+</script>
+
+</body>
+</html>
