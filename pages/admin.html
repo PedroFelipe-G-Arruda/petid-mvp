@@ -251,6 +251,70 @@ font-size:16px;
 
 </div>
 
+<div
+id="stats-grid"
+
+style="
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(220px,1fr));
+gap:16px;
+margin-bottom:24px;
+">
+
+<div
+class="stat-card">
+
+<div class="stat-title">
+🐶 Total Pets
+</div>
+
+<div
+id="total-pets"
+class="stat-number">
+
+0
+
+</div>
+
+</div>
+
+<div
+class="stat-card">
+
+<div class="stat-title">
+🚨 Perdidos
+</div>
+
+<div
+id="missing-pets"
+class="stat-number">
+
+0
+
+</div>
+
+</div>
+
+<div
+class="stat-card">
+
+<div class="stat-title">
+👀 Scans Hoje
+</div>
+
+<div
+id="today-scans"
+class="stat-number">
+
+0
+
+</div>
+
+</div>
+
+</div>
+
 <div id="pet-list">
 Carregando pets...
 </div>
@@ -456,6 +520,110 @@ link.click();
 };
 
 let allPets = [];
+
+
+async function loadStats(){
+
+try{
+
+const {
+data: pets,
+error: petsError
+}
+=
+await client
+.from("pets")
+.select(
+"status"
+);
+
+if(
+petsError
+)
+throw petsError;
+
+const totalPets =
+pets?.length ?? 0;
+
+const missingPets =
+pets?.filter(
+p =>
+p.status ===
+"missing"
+)
+.length ?? 0;
+
+document
+.getElementById(
+"total-pets"
+)
+.innerText =
+totalPets;
+
+document
+.getElementById(
+"missing-pets"
+)
+.innerText =
+missingPets;
+
+const today =
+new Date();
+
+today.setHours(
+0,0,0,0
+);
+
+const {
+data: scans,
+error: scansError
+}
+=
+await client
+.from("scans")
+.select(
+"created_at"
+)
+.gte(
+"created_at",
+today.toISOString()
+);
+
+if(
+scansError
+){
+
+console.error(
+scansError
+);
+
+document
+.getElementById(
+"today-scans"
+)
+.innerText =
+"0";
+
+return;
+}
+
+document
+.getElementById(
+"today-scans"
+)
+.innerText =
+scans?.length ?? 0;
+
+}catch(err){
+
+console.error(
+"Erro stats:",
+err
+);
+
+}
+}
+
 
 async function loadPets(){
 
@@ -783,6 +951,8 @@ filtered
 if(
 checkAdmin()
 ){
+
+loadStats();
 
 loadPets();
 
