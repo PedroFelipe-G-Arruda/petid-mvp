@@ -47,9 +47,9 @@ function getPetId() {
 
 function calcularIdade(
 nascimento
-) {
+){
 
-if (!nascimento) {
+if(!nascimento){
 
 return
 "Idade não informada";
@@ -75,20 +75,12 @@ diffMs /
 )
 );
 
-if (
-dias < 30
-) {
+if(dias < 30){
 
-if (
-dias <= 1
-) {
+return dias === 1
+? "1 dia"
+: `${dias} dias`;
 
-return
-"1 dia";
-}
-
-return `${dias}
-dias`;
 }
 
 const meses =
@@ -96,20 +88,12 @@ Math.floor(
 dias / 30
 );
 
-if (
-meses < 12
-) {
+if(meses < 12){
 
-if (
-meses === 1
-) {
+return meses === 1
+? "1 mês"
+: `${meses} meses`;
 
-return
-"1 mês";
-}
-
-return `${meses}
-meses`;
 }
 
 const anos =
@@ -117,16 +101,42 @@ Math.floor(
 meses / 12
 );
 
-if (
-anos === 1
-) {
+const mesesRestantes =
+meses % 12;
+
+if(anos === 1){
+
+if(
+mesesRestantes === 0
+){
 
 return
 "1 ano";
 }
 
-return `${anos}
-anos`;
+return
+`1 ano e ${mesesRestantes} mês${
+mesesRestantes > 1
+? "es"
+: ""
+}`;
+}
+
+if(
+mesesRestantes === 0
+){
+
+return
+`${anos} anos`;
+}
+
+return
+`${anos} anos e ${mesesRestantes} mês${
+mesesRestantes > 1
+? "es"
+: ""
+}`;
+
 }
 
 
@@ -152,9 +162,35 @@ async function loadPet() {
         )
         .single();
 
-    await registrarScan(
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const isShared =
+params.get(
+"shared"
+);
+
+if(
+isShared !==
+"true"
+){
+
+registrarScan(
 data.id
 );
+
+const newUrl =
+`${window.location.pathname}?id=${data.public_id}&shared=true`;
+
+window.history.replaceState(
+{},
+"",
+newUrl
+);
+
+}
 
     if (error) {
         petDiv.innerHTML =
@@ -325,13 +361,93 @@ data.id
 
         </div>
 
+<div class="section">
+
+    <h3>
+        🛟 Ajuda & Suporte
+    </h3>
+
+    <div class="info-card">
+
+        <p style="
+            margin-top:0;
+            margin-bottom:12px;
+            line-height:1.5;
+        ">
+            Encontrou algum problema
+            ou algo não funcionou?
+        </p>
+
+        <p style="
+            margin-top:0;
+            margin-bottom:20px;
+            color:#666;
+        ">
+            Nos avise para melhorarmos 🙏
+        </p>
+
+       <div class="support-actions">
+
+<a
+class="
+btn
+whatsapp
+support-btn"
+            href="https://wa.me/5565992427002?text=${encodeURIComponent(
+`Olá! Preciso de ajuda com o sistema PetID.
+
+🐶 Pet: ${data.nome}
+
+👤 Tutor: ${data.tutor}
+
+📍 Página:
+${window.location.href}
+
+Problema:
+`
+            )}"
+            target="_blank">
+
+            🛟 Reportar problema
+
+        </a>
+        </div>
+
+    </div>
+
+</div>
+
     </div>
     `;
+
+    
 }
 
 async function registrarScan(
 petId
 ) {
+
+    const params =
+new URLSearchParams(
+window.location.search
+);
+
+const isShared =
+params.get(
+"shared"
+);
+
+if(
+isShared ===
+"true"
+){
+
+console.log(
+"Shared link - scan ignorado"
+);
+
+return;
+}
 
 try {
 
@@ -369,7 +485,13 @@ try {
 
 const res =
 await fetch(
-"https://ipapi.co/json/"
+"https://ipapi.co/json/",
+{
+signal:
+AbortSignal.timeout(
+2000
+)
+}
 );
 
 const geo =

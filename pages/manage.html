@@ -1,73 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
+
 <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width,
-               initial-scale=1">
+<meta
+    name="viewport"
+    content="width=device-width, initial-scale=1">
 
-<title>Gerenciar Pet</title>
+<title>
+    Gerenciar Pet
+</title>
 
-<link rel="stylesheet"
-      href="../css/style.css">
+<link
+    rel="stylesheet"
+    href="../css/style.css">
 
 <style>
 
-.manage-card {
-    background: white;
-    border-radius: 24px;
-    padding: 24px;
+.manage-card{
+    background:white;
+    border-radius:24px;
+    padding:24px;
     box-shadow:
         0 10px 30px
         rgba(0,0,0,0.08);
 }
 
-.form-group {
-    margin-top: 16px;
+.form-group{
+    margin-top:16px;
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
+.form-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:bold;
 }
 
 .form-group input,
 .form-group textarea,
-.form-group select {
+.form-group select{
 
-    width: 100%;
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid #ddd;
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:1px solid #ddd;
 }
 
-.primary-btn {
-    width: 100%;
-    border: none;
-    padding: 18px;
-    border-radius: 16px;
-    color: white;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 18px;
+.primary-btn{
+    width:100%;
+    border:none;
+    padding:18px;
+    border-radius:16px;
+    color:white;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:18px;
 }
 
-.missing-btn {
-    background: #dc2626;
+.missing-btn{
+    background:#dc2626;
 }
 
-.safe-btn {
-    background: #16a34a;
+.safe-btn{
+    background:#16a34a;
 }
 
-.hidden {
-    display: none;
+.hidden{
+    display:none;
 }
 
 </style>
+
 </head>
 
 <body>
@@ -77,11 +83,14 @@
 <div class="manage-card">
 
 <div id="pet-info">
+
 Carregando...
+
 </div>
 
-<div id="missing-form"
-     class="hidden">
+<div
+    id="missing-form"
+    class="hidden">
 
     <div class="form-group">
 
@@ -140,42 +149,59 @@ Carregando...
         <input
             id="reward-value"
             type="number"
-            placeholder=
-            "100">
+            placeholder="100">
 
     </div>
 
     <button
         id="save-missing"
-        class=
-        "primary-btn missing-btn">
+        class="
+        primary-btn
+        missing-btn">
 
         🚨 Salvar desaparecimento
 
     </button>
+
     <button
-    id="cancel-btn"
-    class="primary-btn safe-btn">
+        id="cancel-btn"
+        class="
+        primary-btn
+        safe-btn">
 
-    Cancelar
+        Cancelar
 
-</button>
+    </button>
 
 </div>
 
 <button
     id="missing-btn"
-    class=
-    "primary-btn missing-btn">
+    class="
+    primary-btn
+    missing-btn">
 
     🚨 Meu pet fugiu
 
 </button>
 
 <button
+    id="share-missing-btn"
+    class="
+    primary-btn
+    safe-btn
+    hidden">
+
+    📣 Compartilhar pet perdido
+
+</button>
+
+<button
     id="safe-btn"
-    class=
-    "primary-btn safe-btn hidden">
+    class="
+    primary-btn
+    safe-btn
+    hidden">
 
     ✅ Meu pet voltou
 
@@ -199,7 +225,41 @@ Carregando...
 
 </div>
 
+<div class="support-card">
+
+<h3>
+🛟 Precisa de ajuda?
+</h3>
+
+<p>
+Problemas com cadastro,
+QR, NFC ou pet perdido?
+</p>
+
+<p class="support-subtitle">
+Fale conosco 🙏
+</p>
+
+<div class="support-actions">
+
+<a
+id="support-btn"
+class="
+primary-btn
+safe-btn
+support-btn"
+target="_blank">
+
+🛟 Suporte WhatsApp
+
+</a>
+
 </div>
+
+</div>
+
+</div>
+
 </div>
 
 <script type="module">
@@ -221,7 +281,7 @@ SUPABASE_ANON_KEY
 
 let pet = null;
 
-function getToken() {
+function getToken(){
 
 const params =
 new URLSearchParams(
@@ -233,13 +293,16 @@ return params.get(
 );
 }
 
-async function loadPet() {
+async function loadPet(){
 
 const token =
 getToken();
 
+try{
+
 const {
-data
+data,
+error
 }
 =
 await client
@@ -251,27 +314,53 @@ token
 )
 .single();
 
+if(error)
+throw error;
+
 pet = data;
 
 renderPet();
 
 await loadScans();
-}
 
-function renderPet() {
+}catch(err){
+
+console.error(
+err
+);
 
 document
 .getElementById(
 "pet-info"
 )
-.innerHTML = `
+.innerHTML =
+`
 <h2>
-🐶 ${pet.nome}
+Erro ao carregar pet
+</h2>
+`;
+
+}
+
+}
+
+function renderPet(){
+
+document
+.getElementById(
+"pet-info"
+)
+.innerHTML =
+`
+<h2>
+🐶 ${pet.nome ?? "Sem nome"}
 </h2>
 
 <p>
 Tutor:
-${pet.tutor}
+<b>
+${pet.tutor ?? "-"}
+</b>
 </p>
 
 <p>
@@ -287,14 +376,23 @@ pet.status ===
 </p>
 `;
 
-if (
+if(
 pet.status ===
 "missing"
-) {
+){
 
 document
 .getElementById(
 "safe-btn"
+)
+.classList
+.remove(
+"hidden"
+);
+
+document
+.getElementById(
+"share-missing-btn"
 )
 .classList
 .remove(
@@ -319,7 +417,7 @@ document
 "hidden"
 );
 
-} else {
+}else{
 
 document
 .getElementById(
@@ -338,7 +436,27 @@ document
 .add(
 "hidden"
 );
+
+document
+.getElementById(
+"share-missing-btn"
+)
+.classList
+.add(
+"hidden"
+);
+
+document
+.getElementById(
+"missing-form"
+)
+.classList
+.add(
+"hidden"
+);
+
 }
+
 document
 .getElementById(
 "regiao"
@@ -363,8 +481,8 @@ document
 )
 .value =
 String(
-pet
-.tem_recompensa
+pet.tem_recompensa
+?? false
 );
 
 document
@@ -372,9 +490,28 @@ document
 "reward-value"
 )
 .value =
-pet
-.recompensa
+pet.recompensa
 ?? 0;
+
+document
+.getElementById(
+"support-btn"
+)
+.href =
+`https://wa.me/5565992427002?text=${encodeURIComponent(
+`Olá! Preciso de ajuda com o PetID.
+
+🐶 Pet: ${pet.nome}
+
+👤 Tutor: ${pet.tutor}
+
+🔑 Página do tutor:
+${window.location.href}
+
+Problema:
+`
+)}`;
+
 }
 
 document
@@ -437,8 +574,8 @@ document
 )
 .value =
 String(
-pet
-.tem_recompensa
+pet.tem_recompensa
+?? false
 );
 
 document
@@ -446,14 +583,13 @@ document
 "reward-value"
 )
 .value =
-pet
-.recompensa
+pet.recompensa
 ?? 0;
 
-if (
+if(
 pet.status !==
 "missing"
-) {
+){
 
 document
 .getElementById(
@@ -543,7 +679,8 @@ alert(
 "Pet marcado como perdido"
 );
 
-loadPet();
+await loadPet();
+
 });
 
 document
@@ -592,9 +729,50 @@ await loadPet();
 
 });
 
+document
+.getElementById(
+"share-missing-btn"
+)
+.addEventListener(
+"click",
+() => {
+
+const petUrl =
+`${window.location.origin}/pages/pet.html?id=${pet.public_id}&shared=true`;
+
+const mensagem =
+`🚨 PET DESAPARECIDO 🚨
+
+🐶 Nome: ${pet.nome}
+
+📍 Região:
+${pet.desaparecido_regiao || "Não informada"}
+
+${
+pet.tem_recompensa
+?
+`💰 Recompensa:
+R$ ${pet.recompensa}
+
+`
+:
+""
+}
+Ajude a encontrar 🙏
+
+🔗 Informações do pet:
+${petUrl}`;
+
+window.open(
+`https://wa.me/?text=${encodeURIComponent(mensagem)}`,
+"_blank"
+);
+
+});
+
 function tempoRelativo(
 data
-) {
+){
 
 const scan =
 new Date(
@@ -605,19 +783,19 @@ const agora =
 new Date();
 
 const diffMs =
-agora -
-scan;
+agora - scan;
 
 const segundos =
 Math.floor(
 diffMs / 1000
 );
 
-if (
+if(
 segundos < 60
-) {
+){
 
 return "Agora";
+
 }
 
 const minutos =
@@ -625,13 +803,14 @@ Math.floor(
 segundos / 60
 );
 
-if (
+if(
 minutos < 60
-) {
+){
 
 return minutos === 1
 ? "1 min atrás"
 : `${minutos} min atrás`;
+
 }
 
 const horas =
@@ -639,13 +818,14 @@ Math.floor(
 minutos / 60
 );
 
-if (
+if(
 horas < 24
-) {
+){
 
 return horas === 1
 ? "1 hora atrás"
 : `${horas} horas atrás`;
+
 }
 
 const dias =
@@ -656,9 +836,10 @@ horas / 24
 return dias === 1
 ? "1 dia atrás"
 : `${dias} dias atrás`;
+
 }
 
-async function loadScans() {
+async function loadScans(){
 
 const div =
 document
@@ -666,10 +847,10 @@ document
 "scan-list"
 );
 
-if (
+if(
 !pet ||
 !pet.id
-) {
+){
 
 div.innerHTML =
 "Nenhum acesso";
@@ -677,7 +858,7 @@ div.innerHTML =
 return;
 }
 
-try {
+try{
 
 const {
 data,
@@ -699,9 +880,7 @@ ascending:false
 )
 .limit(10);
 
-if (
-error
-) {
+if(error){
 
 console.error(
 error
@@ -713,10 +892,10 @@ div.innerHTML =
 return;
 }
 
-if (
+if(
 !data ||
 !data.length
-) {
+){
 
 div.innerHTML =
 "Nenhum acesso";
@@ -758,7 +937,7 @@ scan.created_at
 )
 .join("");
 
-} catch(err) {
+}catch(err){
 
 console.error(
 err
@@ -766,7 +945,9 @@ err
 
 div.innerHTML =
 "Erro ao carregar";
+
 }
+
 }
 
 loadPet();

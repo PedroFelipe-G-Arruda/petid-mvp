@@ -722,7 +722,7 @@ pets.map(
 pet => {
 
 const petUrl =
-`${window.location.origin}/pages/pet.html?id=${pet.public_id}`;
+`${window.location.origin}/pages/pet.html?id=${pet.public_id}&shared=true`;
 
 const manageUrl =
 `${window.location.origin}/pages/manage.html?token=${pet.manage_token}`;
@@ -879,7 +879,7 @@ publicId
 ){
 
 const url =
-`${window.location.origin}/pages/pet.html?id=${publicId}`;
+`${window.location.origin}/pages/pet.html?id=${publicId}&shared=true`;
 
 copyText(url);
 

@@ -194,3 +194,45 @@ margin-bottom:10px;
 font-size:34px;
 font-weight:bold;
 }
+
+/* ===== SUPORTE ===== */
+
+.support-card{
+    background:#f7f8fc;
+    padding:18px;
+    border-radius:18px;
+    margin-top:24px;
+    border:1px solid #ececec;
+    width:100%;
+}
+
+.support-card h3{
+    margin-bottom:12px;
+}
+
+.support-card p{
+    margin-top:0;
+    line-height:1.5;
+}
+
+.support-subtitle{
+    color:#666;
+    margin-bottom:20px;
+}
+
+.support-btn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    text-decoration:none;
+    width:auto !important;
+    min-width:240px;
+    padding:16px 28px;
+    margin:0 auto;
+}
+
+.support-actions{
+    display:flex;
+    justify-content:center;
+    margin-top:20px;
+}
