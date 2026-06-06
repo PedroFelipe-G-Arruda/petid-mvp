@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta
+name="viewport"
+content="width=device-width, initial-scale=1.0">
+
+<title>
+Pets Desaparecidos
+</title>
+
+<link
+rel="stylesheet"
+href="../css/style.css">
+
+<style>
+
+body{
+margin:0;
+background:#f4f6fb;
+font-family:Arial,sans-serif;
+}
+
+.container{
+max-width:1400px;
+margin:0 auto;
+padding:24px;
+}
+
+.hero{
+background:white;
+border-radius:24px;
+padding:28px;
+text-align:center;
+box-shadow:
+0 10px 30px
+rgba(0,0,0,.08);
+margin-bottom:24px;
+}
+
+.hero-title{
+font-size:28px;
+font-weight:bold;
+margin-top:8px;
+line-height:1.2;
+}
+
+.hero-subtitle{
+margin-top:10px;
+color:#666;
+font-size:16px;
+}
+
+.pet-grid{
+display:grid;
+grid-template-columns:
+repeat(auto-fit,minmax(320px,1fr));
+gap:20px;
+}
+
+.pet-card{
+background:white;
+border-radius:24px;
+padding:20px;
+
+display:flex;
+flex-direction:column;
+
+height:100%;
+}
+
+.pet-photo{
+width:140px;
+height:140px;
+border-radius:50%;
+object-fit:cover;
+display:block;
+margin:0 auto;
+background:#ddd;
+}
+
+.pet-name{
+text-align:center;
+font-size:26px;
+font-weight:bold;
+margin-top:16px;
+}
+
+.pet-region{
+text-align:center;
+margin-top:10px;
+color:#555;
+}
+
+.reward-box{
+background:#fff5d6;
+border:2px solid #facc15;
+color:#92400e;
+padding:14px;
+border-radius:16px;
+text-align:center;
+margin-top:14px;
+margin-bottom: 10px;
+font-weight:bold;
+}
+
+.reward-empty{
+background:#f8fafc;
+border:2px solid #e2e8f0;
+color:#64748b;
+}
+
+.pet-actions{
+margin-top:auto;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.btn{
+text-decoration:none;
+padding:14px;
+border-radius:16px;
+text-align:center;
+color:white;
+font-weight:bold;
+}
+
+.btn-view{
+background:#2563eb;
+}
+
+.btn-share{
+background:#16a34a;
+}
+
+.empty-state{
+background:white;
+border-radius:24px;
+padding:50px;
+text-align:center;
+color:#666;
+}
+
+@media(max-width:480px){
+
+.hero{
+padding:20px;
+}
+
+.hero-title{
+font-size:22px;
+line-height:1.2;
+}
+
+.hero-subtitle{
+font-size:14px;
+}
+
+.pet-photo{
+width:110px;
+height:110px;
+}
+
+.pet-name{
+font-size:22px;
+}
+
+.pet-actions{
+grid-template-columns:1fr;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="hero">
+
+<div
+id="hero-title"
+class="hero-title">
+
+🚨 Pets Desaparecidos
+
+</div>
+
+<div class="hero-subtitle">
+
+Ajude a localizar e compartilhar.
+
+</div>
+
+</div>
+
+<div
+id="pet-grid"
+class="pet-grid">
+
+Carregando...
+
+</div>
+
+</div>
+
+<script type="module">
+
+import { createClient }
+from
+"https://esm.sh/@supabase/supabase-js";
+
+import {
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+}
+from
+"../js/config.js";
+
+const client =
+createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+async function loadMissingPets(){
+
+const grid =
+document.getElementById(
+"pet-grid"
+);
+
+try{
+
+const {
+data,
+error
+}
+=
+await client
+.from("pets")
+.select("*")
+.eq(
+"status",
+"missing"
+)
+.order(
+"created_at",
+{
+ascending:false
+}
+);
+
+if(error)
+throw error;
+
+const heroTitle =
+document.getElementById(
+"hero-title"
+);
+
+heroTitle.innerText =
+`🚨 ${data.length} ${
+data.length === 1
+? "Pet Desaparecido"
+: "Pets Desaparecidos"
+}`;
+
+if(
+!data ||
+!data.length
+){
+
+grid.innerHTML =
+`
+<div class="empty-state">
+
+<h2>
+🎉 Nenhum pet desaparecido
+</h2>
+
+<p>
+Todos os pets cadastrados estão seguros.
+</p>
+
+</div>
+`;
+
+return;
+}
+
+renderPets(
+data
+);
+
+}catch(err){
+
+console.error(
+err
+);
+
+grid.innerHTML =
+`
+<div class="empty-state">
+
+Erro ao carregar pets
+
+</div>
+`;
+
+}
+
+}
+
+function renderPets(
+pets
+){
+
+const grid =
+document.getElementById(
+"pet-grid"
+);
+
+grid.innerHTML =
+pets.map(
+pet => {
+
+const petUrl =
+`${window.location.origin}/pages/pet.html?id=${pet.public_id}&shared=true`;
+
+const rewardHtml =
+pet.tem_recompensa
+?
+`
+<div class="reward-box">
+
+💰 Recompensa
+
+<br><br>
+
+R$ ${pet.recompensa ?? 0}
+
+</div>
+`
+:
+`
+<div class="reward-box reward-empty">
+
+💰 Recompensa
+
+<br><br>
+
+Sem recompensa cadastrada
+
+</div>
+`;
+
+return `
+
+<div class="pet-card">
+
+<img
+class="pet-photo"
+src="${
+pet.foto_url ||
+'https://placehold.co/300'
+}">
+
+<div class="pet-name">
+
+${pet.nome ?? "Sem nome"}
+
+</div>
+
+<div class="pet-region">
+
+📍 ${
+pet.desaparecido_regiao &&
+pet.desaparecido_regiao.trim()
+?
+pet.desaparecido_regiao
+:
+"Região não informada"
+}
+
+</div>
+
+${rewardHtml}
+
+<div class="pet-actions">
+
+<a
+href="${petUrl}"
+target="_blank"
+class="
+btn
+btn-view">
+
+🐶 Ver Pet
+
+</a>
+
+<button
+class="
+btn
+btn-share"
+
+onclick="
+sharePet(
+'${pet.nome ?? ""}',
+'${pet.desaparecido_regiao ?? ""}',
+'${pet.public_id}',
+'${pet.tem_recompensa ?? false}',
+'${pet.recompensa ?? 0}'
+)
+">
+
+📣 Compartilhar
+
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}
+)
+.join("");
+
+}
+
+window.sharePet =
+function(
+nome,
+regiao,
+publicId,
+temRecompensa,
+recompensa
+){
+
+const petUrl =
+`${window.location.origin}/pages/pet.html?id=${publicId}&shared=true`;
+
+const mensagem =
+`🚨 PET DESAPARECIDO 🚨
+
+🐶 Nome: ${nome}
+
+📍 Região:
+${regiao || "Não informada"}
+
+${
+temRecompensa > 0
+?
+`💰 Recompensa:
+R$ ${recompensa}
+
+`
+:
+""
+}
+Ajude a localizar e compartilhar 🙏
+
+🔗 Informações:
+${petUrl}`;
+
+window.open(
+`https://wa.me/?text=${encodeURIComponent(mensagem)}`,
+"_blank"
+);
+
+};
+
+loadMissingPets();
+
+</script>
+
+</body>
+
+</html>

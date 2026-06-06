@@ -228,9 +228,12 @@ newUrl
 
         <br><br>
 
-        ${
+        ${  data.desaparecido_regiao &&
+            data.desaparecido_regiao.trim()
+            ?
             data.desaparecido_regiao
-            ?? "Não informada"
+            :
+            "Não informada"
         }
 
         <br><br>
