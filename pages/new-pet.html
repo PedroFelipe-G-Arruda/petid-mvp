@@ -711,8 +711,11 @@ uploadError
 )
 throw uploadError;
 
+const imageVersion =
+Date.now();
+
 fotoUrl =
-`${SUPABASE_URL}/storage/v1/object/public/pets/${fileName}`;
+`${SUPABASE_URL}/storage/v1/object/public/pets/${fileName}?v=${imageVersion}`;
 
 }
 

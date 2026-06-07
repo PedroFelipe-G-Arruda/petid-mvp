@@ -269,8 +269,9 @@ newUrl
 
         <div class="pet-photo">
             <img src="${
-                data.foto_url ??
-                'https://placehold.co/300'
+                data.foto_url
+                ? `${data.foto_url}${data.foto_url.includes('?') ? '&' : '?'}t=${Date.now()}`
+                : 'https://placehold.co/200'
             }">
         </div>
 

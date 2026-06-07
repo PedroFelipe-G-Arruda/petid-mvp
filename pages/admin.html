@@ -887,8 +887,9 @@ return `
 <img
 class="pet-photo"
 src="${
-pet.foto_url ||
-'https://placehold.co/200'
+    pet.foto_url
+    ? `${pet.foto_url}${pet.foto_url.includes('?') ? '&' : '?'}t=${Date.now()}`
+    : 'https://placehold.co/200'
 }">
 
 <div class="pet-info">
