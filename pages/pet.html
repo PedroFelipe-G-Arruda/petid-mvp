@@ -46,13 +46,26 @@ function getPetId() {
 }
 
 function calcularIdade(
-nascimento
+nascimento,
+idadeAntiga = null
 ){
 
 if(!nascimento){
 
+if(
+idadeAntiga &&
+idadeAntiga > 0
+){
+
+return idadeAntiga === 1
+? "1 ano"
+: `${idadeAntiga} anos`;
+
+}
+
 return
 "Idade não informada";
+
 }
 
 const hoje =
@@ -112,6 +125,7 @@ mesesRestantes === 0
 
 return
 "1 ano";
+
 }
 
 return
@@ -120,6 +134,7 @@ mesesRestantes > 1
 ? "es"
 : ""
 }`;
+
 }
 
 if(
@@ -128,6 +143,7 @@ mesesRestantes === 0
 
 return
 `${anos} anos`;
+
 }
 
 return

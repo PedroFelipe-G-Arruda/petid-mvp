@@ -93,6 +93,21 @@ box-shadow:
 0 6px 20px
 rgba(0,0,0,0.06);
 border:1px solid #eee;
+
+transition:.2s;
+}
+
+.pet-card.missing{
+border:2px solid #dc2626;
+
+box-shadow:
+0 8px 24px
+rgba(
+220,
+38,
+38,
+0.15
+);
 }
 
 .pet-header{
@@ -279,6 +294,13 @@ min-height:420px;
 🐶 Pets cadastrados
 </h2>
 
+<div
+style="
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+">
+
 <a
 href="./new-pet.html?key=pedro-pet-2026"
 class="primary-btn">
@@ -286,6 +308,19 @@ class="primary-btn">
 + Novo Pet
 
 </a>
+
+<a
+href="./perdidos.html"
+target="_blank"
+class="
+primary-btn
+orange-btn">
+
+🚨 Pets Perdidos
+
+</a>
+
+</div>
 
 </div>
 
@@ -880,7 +915,14 @@ const editUrl =
 
 return `
 
-<div class="pet-card">
+<div
+class="
+pet-card
+${
+pet.status === "missing"
+? "missing"
+: ""
+}">
 
 <div class="pet-header">
 
